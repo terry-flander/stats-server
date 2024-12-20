@@ -19,11 +19,11 @@ if __name__ == "__main__":
     parser.add_argument("--url", required=False, default="https://api.gtm.ostraa.corp.telstra.com/t/catania.api/statistics-service/drop12/v1/statistics-service/stats")
 
     # inputType == file
-    parser.add_argument("--dataFolder", required=False, default="./test-data")
+    parser.add_argument("--dataFolder", required=False, default="./data/test-data")
 
     # common arguments
-    parser.add_argument("--saveFolder", required=False, default='summary-data')
-    parser.add_argument("--summaryStatList", required=False, default=f"./summary-stat-list.csv")
+    parser.add_argument("--saveFolder", required=False, default='./data/summary-data')
+    parser.add_argument("--summaryStatList", required=False, default=f"./conf/summary-stat-list.csv")
     parser.add_argument("--logLevel", required=False, default=0, type=int)
     args = parser.parse_args()
 

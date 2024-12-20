@@ -5,7 +5,6 @@ import csv
 import json
 import requests
 import pandas as pd
-import datetime
 import traceback
 
 def prepareDataFrame(df, logLevel):
@@ -29,10 +28,14 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
     try:
         result = time_2.copy()
         change_raw = time_2.copy()
+
+        # Simple subtraction. Could product negative differences
         value_change = time_2['value'] - time_1['value']
 
+        # Convert any case where time_1.value > time_2.value to time_2.value
         result['value'] = value_change.where(value_change >= 0, time_2['value'])
         change_raw['value'] = value_change
+
         if logLevel > 0:
             print(f'Checking {len(result.index)} changes since {str(lastTimestamp)}')
         
@@ -43,6 +46,11 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
             result.to_json(save_change, orient="records")
             if logLevel > 1:
                 print(f"Change saved to {save_change}")
+
+        if logLevel > 2:
+            os.makedirs(os.path.join(os.getcwd(), saveFolder + '/raw/'), exist_ok=True)
+            save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file}'
+            change_raw.to_json(save_raw, orient="records")
 
     except Exception:
         print(traceback.format_exc())
