@@ -17,7 +17,7 @@ to a restart of the system (all restart at 0)
 Before you can run or compile the script, you need to have the following installed:
 
 - Python 3.6 or higher
-- Required Python packages: requests, pandas, pyinstaller
+- Required Python packages: requests, pandas, pyinstaller, Flask
 
 You can install the required Python packages using pip:
 ```
