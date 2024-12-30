@@ -31,10 +31,12 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
 
         # Simple subtraction. Could product negative differences
         value_change = time_2['value'] - time_1['value']
+        time_change =  time_2['timestamp'] - time_1['timestamp']
 
         # Convert any case where time_1.value > time_2.value to time_2.value
         result['value'] = value_change.where(value_change >= 0, time_2['value'])
         change_raw['value'] = value_change
+        change_raw['timeDelta'] = time_change.astype(str)
 
         if logLevel > 0:
             print(f'Checking {len(result.index)} changes since {str(lastTimestamp)}')
@@ -49,8 +51,8 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
 
         if logLevel > 2:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/raw/'), exist_ok=True)
-            save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file}'
-            change_raw.to_json(save_raw, orient="records")
+            save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file.replace('.json','.csv')}'
+            change_raw.to_csv(save_raw)
 
     except Exception:
         print(traceback.format_exc())
@@ -72,11 +74,18 @@ def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save
             result += [{ "statisticName": st[0], "value": stat["value"].sum(), "count": count, "date_time": date_type }]
 
         if len(result) > 0:
-            os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/'), exist_ok=True)
-            save_stats = f'{os.getcwd()}/{saveFolder}/stats/{save_file}'
+            os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/json/'), exist_ok=True)
+            save_stats = f'{os.getcwd()}/{saveFolder}/stats/json/{save_file}'
             with open(save_stats,"w+") as f:
                 f.write(json.dumps(result, default=str))
             if logLevel > 1:
+                print(f"Summary statistics saved to {save_stats}")
+
+            if logLevel > 2:
+                os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/csv/'), exist_ok=True)
+                save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file.replace('.json','.csv')}'
+                df = pd.DataFrame(result)
+                df.to_csv(save_stats, index=False)
                 print(f"Summary statistics saved to {save_stats}")
         
     except Exception:
