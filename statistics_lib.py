@@ -52,7 +52,7 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
         if logLevel > 2:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/raw/'), exist_ok=True)
             save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file.replace('.json','.csv')}'
-            change_raw.to_csv(save_raw)
+            change_raw.to_csv(save_raw, index=False)
 
     except Exception:
         print(traceback.format_exc())
