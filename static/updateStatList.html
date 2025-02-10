@@ -1,0 +1,39 @@
+<head>
+    <title>Update Text Field</title>
+</head>
+<body>
+    <h2>Summary Statistics List</h2>
+    <h3>CSV file contining summary statistic name and regular expression pairs</h3>
+    File Name: 
+    <input type="text" id="summaryStatListUrl" width="60" value="./conf/summary-stat-list.csv">
+    <button onclick="loadFile()">Load File</button>
+    <button onclick="saveFile()">Save File</button>
+    <br/><br/>
+    <textarea id="summaryStatList" rows="30" cols="80">
+    </textarea>
+
+    <script>
+        function loadFile() {
+            fetch('http://127.0.0.1:5000/stats/api/v1.0/statlist', {
+            method: 'get'})
+            .then(response => response.text())
+            .then((response) => {
+                document.getElementById("summaryStatList").value = response
+            })
+            .catch(function(err) {
+                // Error :(
+            });
+        }
+
+        function saveFile() {
+            var params = 
+               "summaryStatListUrl=" + document.getElementById("summaryStatListUrl").value
+               + "&summaryStatList=" + document.getElementById("summaryStatList").value;
+
+            var request = new XMLHttpRequest();
+            request.open("POST", "/stats/api/v1.0/statlist?" + params);
+            request.send(null);
+        }
+    </script>
+</body>
+</html>

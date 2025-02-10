@@ -71,7 +71,9 @@ def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save
         for st in summary_list:
             stat = change[change['newIndex'].str.contains(st[1])]
             count = len(change[change['newIndex'].str.contains(st[1])])
-            result += [{ "statisticName": st[0], "value": stat["value"].sum(), "count": count, "date_time": date_type }]
+            value = stat["value"].astype(int).sum()
+            if count > 0:
+                result += [{ "statisticName": st[0], "value": value, "count": count, "date_time": date_type }]
 
         if len(result) > 0:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/json/'), exist_ok=True)
@@ -141,6 +143,35 @@ def getTestStatistics(dataFolder, offset, logLevel):
 
     return result
     
+def getStatList(summaryStatList, logLevel):
+
+    result = ''
+    try:
+        with open(summaryStatList, 'r') as file:
+            result = file.read()
+        if logLevel > 1:
+            print (f'Loaded summaryStatList from {summaryStatList}')
+        if logLevel > 2:
+            print (result)
+            
+    except Exception:
+        print(traceback.format_exc())
+
+    return result
+
+def saveStatList(summaryStatListUrl, summaryStatList, logLevel):
+
+    try:
+        with open(summaryStatListUrl, 'w') as file:
+            file.write(summaryStatList)
+        if logLevel > 1:
+            print (f'Saved summaryStatList to {summaryStatListUrl}')
+            
+    except Exception:
+        print(traceback.format_exc())
+
+    return summaryStatList
+
 def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
 
     result = []
