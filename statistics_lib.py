@@ -59,13 +59,13 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
 
     return result
 
-def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel):
+def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel, refStats):
 
     result = []
     try:
         with open(summaryStatList, newline='') as f:
             reader = csv.reader(f)
-            summary_list = list(reader)
+            summary_list = list(reader) + refStats
 
         date_type = str(timestamp)
         for st in summary_list:
@@ -106,6 +106,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
                 dict_train = json.load(train_file)
             time_1 = prepareDataFrame(pd.DataFrame.from_dict(dict_train), logLevel)
             lastTimestamp = time_1['timestamp'].max()
+            refStats = getUniqueValues(time_1, "podReference")
 
             with open(os.path.join(dataFolder, rawStatsFiles[count + 1])) as train_file:
                 dict_train = json.load(train_file)
@@ -117,7 +118,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
 
             py_date = thisTimestamp.to_pydatetime()
             timestamp = py_date.strftime("%Y-%m-%dT%H:%M:%S")
-            data = createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel)
+            data = createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel, refStats)
             result += data
     except Exception:
         print(traceback.format_exc())
@@ -179,7 +180,8 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
         response = requests.get(url).json()
         time_2 = prepareDataFrame(pd.json_normalize(response), logLevel)
         thisTimestamp = time_2['timestamp'].max()
-        
+        refStats = getUniqueValues(time_2, "podReference")
+
         # Save URL Contents for next time
         os.makedirs(os.path.join(os.getcwd(), saveFolder + '/urlData/'), exist_ok=True)
         save_file_name = f'stats{thisTimestamp.strftime("%Y%m%d_%H%M%S")}.json'
@@ -207,7 +209,7 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
             if interval <= maxInterval:
                 lastTimestamp = time_1['timestamp'].max()
                 change = calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file_name, logLevel)
-                data = createSummaryStatistics(summaryStatList, thisTimestamp, change, saveFolder, save_file_name, logLevel)
+                data = createSummaryStatistics(summaryStatList, thisTimestamp, change, saveFolder, save_file_name, logLevel, refStats)
                 result += data
             elif logLevel > 0:
                 print(f'Last statistics {interval} minutes ago. No statistics generated. (maxInterval={maxInterval})')
@@ -220,4 +222,12 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
     except Exception:
         print(traceback.format_exc())
 
+    return result
+
+def getUniqueValues(pd, index):
+
+    u = pd[index].unique()
+    result = []
+    for e in u:
+        result += [(e, e)]
     return result

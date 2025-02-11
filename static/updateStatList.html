@@ -28,11 +28,10 @@
         function saveFile() {
             var params = 
                "summaryStatListUrl=" + document.getElementById("summaryStatListUrl").value
-               + "&summaryStatList=" + document.getElementById("summaryStatList").value;
-
+               + "&summaryStatList=" + encodeURIComponent(document.getElementById("summaryStatList").value);
             var request = new XMLHttpRequest();
             request.open("POST", "/stats/api/v1.0/statlist?" + params);
-            request.send(null);
+            request.send();
         }
     </script>
 </body>

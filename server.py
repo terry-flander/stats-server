@@ -24,7 +24,7 @@ def process_files():
     try:
         dataFolder = request.args.get('dataFolder', default=args.dataFolder, type=str)
         logLevel = request.args.get('logLevel', default=args.logLevel, type=int)
-        summaryStatList = request.args.get('logLevel', default=args.summaryStatList, type=str)
+        summaryStatList = request.args.get('summaryStatList', default=args.summaryStatList, type=str)
         result = sl.statisticsFromFiles(dataFolder, summaryStatList, args.saveFolder, logLevel)
         return jsonify(result)
     
@@ -36,7 +36,7 @@ def process_url():
     url = request.args.get('url', default=args.url)
     dataFolder = request.args.get('dataFolder', default='', type=str)
     logLevel = request.args.get('logLevel', default=args.logLevel, type=int)
-    summaryStatList = request.args.get('logLevel', default=args.summaryStatList, type=str)
+    summaryStatList = request.args.get('summaryStatList', default=args.summaryStatList, type=str)
     if len(dataFolder) > 0:
         url += '&dataFolder=' + dataFolder
     result = sl.statisticsFromUrl(url, summaryStatList, args.saveFolder, args.maxInterval, logLevel)
@@ -51,7 +51,6 @@ def get_test():
     offset = request.args.get('offset', default=0, type=int)    
     dataFolder = request.args.get('dataFolder', default=args.dataFolder, type=str)
     logLevel = request.args.get('logLevel', default=args.logLevel, type=int)
-    summaryStatList = request.args.get('logLevel', default=args.summaryStatList, type=str)
     return jsonify(sl.getTestStatistics(dataFolder, offset, logLevel))
 
 @app.route('/stats/api/v1.0/statlist', methods=['GET','POST'])
