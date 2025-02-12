@@ -64,8 +64,27 @@ At startup, the following Command Line Arguments are available. Some can be over
 
 --``logLevel``: set level of logging. (default=``0``)
   - 0 - Log errors only
-  - 1 - Log errors and one messsage per requestt
+  - 1 - Log errors and one messsage per request
   - 2 - Log errors and all messages
+  - 3 - Log errors and messages; save calculated change: raw (CSV) and corrected (JSON); save summarised statistics (CSV and JSON)
+
+### Update Summary Statistics List
+
+Using the **server** Executable
+
+Start the server with any of the above parameters (except --url / --file). A Flask endpoint will be enabled at:
+
+--http://127.0.0.1:5000
+
+Use any of the API endpoints to execute the indicated activities. Parameters are available to override the default values described above. Use the **logLevel** argument to control both local logging and temporary file retention. Both the **file** and **url** endpoints return only summary statistics as described by the **summaryStatList** CSV file. For **file** will be all sample times found in input **dataFolder**. For **url** will be only current period change unless the time since last sample greater than **maxInterval**. In that case the first **url** request returns nothing but is saved for the next request.
+
+An HTML page is provided which allows access to the summary-stat-list.csv file for review and editing. This page is located at the standard Flask static endpoint:
+
+-- http://127.0.0.1:5000/static/updateStatList.html
+
+From this page, the current summary statistics list can be loaded, updated, and saved either with the original name (default), or a new name. To test or use a new file, use the ``summaryStatList`` argument with either the File or URL end-points. (see below)
+
+The content of the file is a simple two column csv where the first column is the summary key to be generated, and the 2nd field contains a simple regular expression which is searched for in the generated index of each calculated change row.
 
 API:
 
@@ -83,7 +102,24 @@ GET /stats/api/v1.0/test
  - dataFolder - alternative dataFolder to use for processing. Defaults to ./data-folder
  - logLevel - set logging level: 0 = none, 1 = minimum > 1 all
 
+GET, POST /stats/api/v1.0/statlist
+ - offset - offset to entries in the data file list in dataFolder - 0 to total number of files - 1.
+ - dataFolder - alternative dataFolder to use for processing. Defaults to ./data-folder
+ - logLevel - set logging level: 0 = none, 1 = minimum > 1 all
 
+### EXAMPLES
+
+Process files in directory **test-data-5**, generate statistics described in **summary-stat-list-2.csv** with full loggin; save all intermediate data:
+
+```http://127.0.0.1:5000/stats/api/v1.0/file?summaryStatList=./conf/summary-stat-list-2.csv&logLevel=3&dataFolder=./data/test-data-5```
+
+Get the most recent changes to summary statics using all defaults:
+
+```http://127.0.0.1:5000/stats/api/v1.0/url```
+
+GET this URL to load Maintenance form. Load and Save buttons get selected CSV and save or save-as based on entered file name:
+
+```http://127.0.0.1:5000/static/updateStatList.html```
 
 Using the **catania_stats**.py Executable
 

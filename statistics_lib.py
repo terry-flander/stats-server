@@ -44,12 +44,10 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
         os.makedirs(os.path.join(os.getcwd(), saveFolder + '/change/'), exist_ok=True)
         save_change = f'{os.getcwd()}/{saveFolder}/change/{save_file}'
         
-        if result is not None:
+        if result is not None and logLevel > 2:
             result.to_json(save_change, orient="records")
-            if logLevel > 1:
-                print(f"Change saved to {save_change}")
+            print(f"Change saved to {save_change}")
 
-        if logLevel > 2:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/raw/'), exist_ok=True)
             save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file.replace('.json','.csv')}'
             change_raw.to_csv(save_raw, index=False)
