@@ -21,7 +21,7 @@ Before you can run or compile the script, you need to have the following install
 
 You can install the required Python packages using pip:
 ```
-pip install requests pandas pyinstaller
+pip install -r requirements.txt
 ```
 
 ## COMPILIATION

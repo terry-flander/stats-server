@@ -118,6 +118,15 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
             timestamp = py_date.strftime("%Y-%m-%dT%H:%M:%S")
             data = createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel, refStats)
             result += data
+
+        if logLevel > 2:
+            os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/csv/'), exist_ok=True)
+            save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file.replace('.json','-all.csv')}'
+            df = pd.DataFrame(result)
+            df.to_csv(save_stats, index=False)
+            print(f"Summary statistics saved to {save_stats}")
+
+
     except Exception:
         print(traceback.format_exc())
 
