@@ -1,12 +1,12 @@
 # server.py
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import argparse
 import statistics_lib as sl
 import json
 import traceback
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 parser = argparse.ArgumentParser(description="Create Summary Catania Statistics")
 
@@ -17,6 +17,10 @@ parser.add_argument("--summaryStatList", required=False, default=f"./conf/summar
 parser.add_argument("--maxInterval", required=False, default=10)
 parser.add_argument("--logLevel", required=False, default=0, type=int)
 args = parser.parse_args()
+
+@app.route('/stats/editConfig/v1.0')
+def get_edit_form():
+    return render_template('updateStatList.html')
 
 @app.route('/stats/api/v1.0/file', methods=['GET'])
 def process_files():

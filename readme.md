@@ -35,8 +35,11 @@ pyinstaller --onefile catania_stats.py
 
 For server.py:
 ```
-pyinstaller --onefile server.py
+pyinstaller --onefile server.py -F --add-data "./templates/*:templates"
 ```
+
+Note the inclusion of --add-data to include templates directory. This provides access to the Update Statistics List HTML page (updateStatList.html)
+
 After running these commands, you will find the compiled executables in the dist directory.
 
 ## USAGE
