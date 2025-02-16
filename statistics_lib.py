@@ -83,7 +83,8 @@ def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save
 
             if logLevel > 2:
                 os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/csv/'), exist_ok=True)
-                save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file.replace('.json','.csv')}'
+                save_file = save_file.replace('.json','.csv')
+                save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file}'
                 df = pd.DataFrame(result)
                 df.to_csv(save_stats, index=False)
                 print(f"Summary statistics saved to {save_stats}")
@@ -121,7 +122,8 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
 
         if logLevel > 2:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/csv/'), exist_ok=True)
-            save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file.replace('.json','-all.csv')}'
+            save_file = save_file.replace('.json','-all.csv')
+            save_stats = f'{os.getcwd()}/{saveFolder}/stats/csv/{save_file}'
             df = pd.DataFrame(result)
             df.to_csv(save_stats, index=False)
             print(f"Summary statistics saved to {save_stats}")
