@@ -2,8 +2,6 @@
 data/summary-data/
 conf/summary-stat-list-*.csv
 .DS*
-*.exe
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
