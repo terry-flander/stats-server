@@ -89,15 +89,21 @@ From this page, the current summary statistics list can be loaded, updated, and 
 
 The content of the file is a simple two column csv where the first column is the summary key to be generated, and the 2nd field contains a simple regular expression which is searched for in the generated index of each calculated change row.
 
+API Documentation is available at:
+
+https://documenter.getpostman.com/view/1639425/2sAYdZtDSg
+
 API:
 
 GET /stats/api/v1.0/file
  - dataFolder - alternative dataFolder to use for processing. Defaults to ./data-folder
+ - summaryStatList - CSV file contining summary statistic name and regular expression pairs
  - logLevel - set logging level: 0 = none, 1 = minimum > 1 all
 
 GET /stats/api/v1.0/url
  - url - fully qualified URL souce for Catania Statistics API
  - dataFolder - alternative dataFolder to use for processing. Defaults to ./data-folder
+ - summaryStatList - CSV file contining summary statistic name and regular expression pairs
  - logLevel - set logging level: 0 = none, 1 = minimum > 1 all
 
 GET /stats/api/v1.0/test
