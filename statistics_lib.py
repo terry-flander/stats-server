@@ -38,6 +38,9 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
         change_raw['value'] = value_change
         change_raw['timeDelta'] = time_change.astype(str)
 
+        new_index = change_raw.query("timeDelta == 'NaT'")
+        reset_index = change_raw.query("value < 0")
+
         if logLevel > 0:
             print(f'Checking {len(result.index)} changes since {str(lastTimestamp)}')
         
@@ -55,11 +58,15 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
     except Exception:
         print(traceback.format_exc())
 
-    return result
+    return result, new_index, reset_index
 
-def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel, refStats):
+def createSummaryStatistics(summaryStatList, timestamp, c, saveFolder, save_file, logLevel, refStats):
 
     result = []
+    change = c[0]
+    new_index = c[1]
+    reset_index = c[2]
+
     try:
         with open(summaryStatList, newline='') as f:
             reader = csv.reader(f)
@@ -72,6 +79,11 @@ def createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save
             value = stat["value"].astype(int).sum()
             if count > 0:
                 result += [{ "statisticName": st[0], "value": value, "count": count, "date_time": date_type }]
+
+        # ADD NEW COUNT OF INDEX CHANGES
+        result += [{ "statisticName": "NEW_INDEX_COUNT", "value": new_index.shape[0], "count": 0, "date_time": date_type }]
+        result += [{ "statisticName": "RESET_INDEX_COUNT", "value": reset_index.shape[0], "count": 0, "date_time": date_type }]
+
 
         if len(result) > 0:
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/stats/json/'), exist_ok=True)
