@@ -35,10 +35,10 @@ pyinstaller --onefile catania_stats.py
 
 For server.py:
 ```
-pyinstaller --onefile server.py -F --add-data "./templates/*:templates"
+pyinstaller --onefile server.py -F --add-data "./templates/*:templates" --add-data "./scripts/*:scripts"
 ```
 
-Note the inclusion of --add-data to include templates directory. This provides access to the Update Statistics List HTML page (updateStatList.html)
+Note the inclusion of --add-data to include templates and scripts directory. This provides access to the Update Statistics List HTML page (updateStatList.html) and secure request scripts (catania_stat.*)
 
 After running these commands, you will find the compiled executables in the dist directory.
 
@@ -52,7 +52,7 @@ In addition, there is an API which allows any saved local file to be fetched. Th
 
 At startup, the following Command Line Arguments are available. Some can be overriden as API Parameters.
 
---``url``: if inputType == url then the source of JSON Catania Statistics (default=``production catania``)
+--``url``: if inputType == url then the source of JSON Catania Statistics (default=``production catania``). If this URL begins with 'https' then this will execute the script catania_stat.sh. This script is based on the script used by Zabbix to make a token based secure request to the Statistics API. 
 
 --``dataFolder``: if inputType == file then a directory containing two or more captured Statistics JSON files. File names are not relevant however files are processed alphabetically, so newest file should always be last. (default=``test_data``)
 

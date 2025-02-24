@@ -6,6 +6,7 @@ import json
 import requests
 import pandas as pd
 import traceback
+import subprocess
 
 def prepareDataFrame(df, logLevel):
    
@@ -198,7 +199,8 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
 
     result = []
     try:
-        response = requests.get(url).json()
+        response = getStatisticsAPI(url)
+
         time_2 = prepareDataFrame(pd.json_normalize(response), logLevel)
         thisTimestamp = time_2['timestamp'].max()
         refStats = getUniqueValues(time_2, "podReference")
@@ -240,6 +242,23 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
                 os.remove(os.path.join(save_dir + rawStatsFiles[count]),)
 
 
+    except Exception:
+        print(traceback.format_exc())
+
+    return result
+
+def getStatisticsAPI(url):
+    
+    result = []
+
+    try:
+        if not url.startswith('http'):
+            proc = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True, text=False)
+            (out, err) = proc.communicate()
+            with open('temp.json') as train_file:
+                result = json.load(train_file)
+        else:
+            result = requests.get(url).json()
     except Exception:
         print(traceback.format_exc())
 
