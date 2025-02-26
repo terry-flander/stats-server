@@ -89,6 +89,11 @@ From this page, the current summary statistics list can be loaded, updated, and 
 
 The content of the file is a simple two column csv where the first column is the summary key to be generated, and the 2nd field contains a simple regular expression which is searched for in the generated index of each calculated change row.
 
+In addition to the summary statistics described above, the application also automatically returns:
+
+ - Total for each unique value of 'podReference' as determined by values in the Request being analysed
+ - Total for each statisticName where the name includes 'BUFFERED'. These are also determined by values in the Request being analysed. There should be only one of each and the value returned is the value in the request -- not a calculated difference. These values are of type 'Gauge' and so are not counters.
+
 API Documentation is available at:
 
 https://documenter.getpostman.com/view/1639425/2sAYdZtDSg

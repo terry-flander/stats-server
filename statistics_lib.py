@@ -31,10 +31,10 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
         change_raw = time_2.copy()
 
         # Simple subtraction. Could product negative differences
-        value_change = time_2['value'] - time_1['value']
+        value_change = time_2['value'] - time_1['value'].where(time_1['statisticsType'] == 'Counter')
         time_change =  time_2['timestamp'] - time_1['timestamp']
 
-        # Convert any case where time_1.value > time_2.value to time_2.value
+        # Convert any case where time_1.value > time_2.value to time_2.value or if statistic of type 'Gauge'
         result['value'] = value_change.where(value_change >= 0, time_2['value'])
         change_raw['value'] = value_change
         change_raw['timeDelta'] = time_change.astype(str)
@@ -118,7 +118,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
                 dict_train = json.load(train_file)
             time_1 = prepareDataFrame(pd.DataFrame.from_dict(dict_train), logLevel)
             lastTimestamp = time_1['timestamp'].max()
-            refStats = getUniqueValues(time_1, "podReference")
+            refStats = getUniqueValues(time_1, "podReference", None) + getUniqueValues(time_1, "statisticName", "BUFFERED")
 
             with open(os.path.join(dataFolder, rawStatsFiles[count + 1])) as train_file:
                 dict_train = json.load(train_file)
@@ -264,10 +264,11 @@ def getStatisticsAPI(url):
 
     return result
 
-def getUniqueValues(pd, index):
+def getUniqueValues(pd, index, matching):
 
     u = pd[index].unique()
     result = []
     for e in u:
-        result += [(e, e)]
+        if matching is None or matching in e:
+            result += [(e, e)]
     return result
