@@ -118,7 +118,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
                 dict_train = json.load(train_file)
             time_1 = prepareDataFrame(pd.DataFrame.from_dict(dict_train), logLevel)
             lastTimestamp = time_1['timestamp'].max()
-            refStats = getUniqueValues(time_1, "podReference", None) + getUniqueValues(time_1, "statisticName", "BUFFERED")
+            refStats = getUniqueValues(time_1, "podReference", None) + getUniqueValues(time_1, "statisticName", "BUFFERED") + getUniqueValues(time_1, "statisticName", "SENT_PER_LEMF")
 
             with open(os.path.join(dataFolder, rawStatsFiles[count + 1])) as train_file:
                 dict_train = json.load(train_file)
