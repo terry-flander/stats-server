@@ -89,10 +89,24 @@ From this page, the current summary statistics list can be loaded, updated, and 
 
 The content of the file is a simple two column csv where the first column is the summary key to be generated, and the 2nd field contains a simple regular expression which is searched for in the generated index of each calculated change row.
 
-In addition to the summary statistics described above, the application also automatically returns:
+## Automatic Statistics
 
- - Total for each unique value of 'podReference' as determined by values in the Request being analysed
- - Total for each statisticName where the name includes 'BUFFERED'. These are also determined by values in the Request being analysed. There should be only one of each and the value returned is the value in the request -- not a calculated difference. These values are of type 'Gauge' and so are not counters.
+In addition to the summary statistics described above, the application can automatically create new statistics from the contents of the data result.
+Each entry in the ``summaryStatList`` which has **AUTO** as its first value will then be expaned by selecting unique Column Names as follows:
+
+ - [0] - "AUTO"
+ - [1] - Result data Column Name
+ - [2] - Column Value contains this value. Leave blank for all unique Column Names
+
+Used to select Pod totals, Buffered gauge values, and LEMF Sent totals
+
+Examples:
+
+```
+AUTO,podReference,
+AUTO,statisticName,"BUFFERED"
+AUTO,statisticName,"SENT_PER_LEMF"
+```
 
 API Documentation is available at:
 

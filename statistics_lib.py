@@ -61,7 +61,7 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
 
     return result, new_index, reset_index
 
-def createSummaryStatistics(summaryStatList, timestamp, c, saveFolder, save_file, logLevel, refStats):
+def createSummaryStatistics(summary_list, timestamp, c, saveFolder, save_file, logLevel):
 
     result = []
     change = c[0]
@@ -69,17 +69,15 @@ def createSummaryStatistics(summaryStatList, timestamp, c, saveFolder, save_file
     reset_index = c[2]
 
     try:
-        with open(summaryStatList, newline='') as f:
-            reader = csv.reader(f)
-            summary_list = list(reader) + refStats
 
         date_type = str(timestamp)
         for st in summary_list:
-            stat = change[change['newIndex'].str.contains(st[1])]
-            count = len(change[change['newIndex'].str.contains(st[1])])
-            value = stat["value"].astype(int).sum()
-            if count > 0:
-                result += [{ "statisticName": st[0], "value": value, "count": count, "date_time": date_type }]
+            if st[0] != "AUTO":
+                stat = change[change['newIndex'].str.contains(st[1])]
+                count = len(change[change['newIndex'].str.contains(st[1])])
+                value = stat["value"].astype(int).sum()
+                if count > 0:
+                    result += [{ "statisticName": st[0], "value": value, "count": count, "date_time": date_type }]
 
         # ADD NEW COUNT OF INDEX CHANGES
         result += [{ "statisticName": "NEW_INDEX_COUNT", "value": new_index.shape[0], "count": 0, "date_time": date_type }]
@@ -111,6 +109,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
 
     result = []
     try:
+
         items = os.listdir(dataFolder)
         rawStatsFiles = sorted(items)
         for count in range(0, len(rawStatsFiles) - 1):
@@ -118,7 +117,8 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
                 dict_train = json.load(train_file)
             time_1 = prepareDataFrame(pd.DataFrame.from_dict(dict_train), logLevel)
             lastTimestamp = time_1['timestamp'].max()
-            refStats = getUniqueValues(time_1, "podReference", None) + getUniqueValues(time_1, "statisticName", "BUFFERED") + getUniqueValues(time_1, "statisticName", "SENT_PER_LEMF")
+            summary_list = getStatisticList(summaryStatList, time_1)
+
 
             with open(os.path.join(dataFolder, rawStatsFiles[count + 1])) as train_file:
                 dict_train = json.load(train_file)
@@ -130,7 +130,7 @@ def statisticsFromFiles(dataFolder, summaryStatList, saveFolder, logLevel):
 
             py_date = thisTimestamp.to_pydatetime()
             timestamp = py_date.strftime("%Y-%m-%dT%H:%M:%S")
-            data = createSummaryStatistics(summaryStatList, timestamp, change, saveFolder, save_file, logLevel, refStats)
+            data = createSummaryStatistics(summary_list, timestamp, change, saveFolder, save_file, logLevel)
             result += data
 
         if logLevel > 2:
@@ -203,7 +203,7 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
 
         time_2 = prepareDataFrame(pd.json_normalize(response), logLevel)
         thisTimestamp = time_2['timestamp'].max()
-        refStats = getUniqueValues(time_2, "podReference")
+        summary_list = getStatisticList(summaryStatList, time_2)
 
         # Save URL Contents for next time
         os.makedirs(os.path.join(os.getcwd(), saveFolder + '/urlData/'), exist_ok=True)
@@ -232,7 +232,7 @@ def statisticsFromUrl(url, summaryStatList, saveFolder, maxInterval, logLevel):
             if interval <= maxInterval:
                 lastTimestamp = time_1['timestamp'].max()
                 change = calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file_name, logLevel)
-                data = createSummaryStatistics(summaryStatList, thisTimestamp, change, saveFolder, save_file_name, logLevel, refStats)
+                data = createSummaryStatistics(summary_list, thisTimestamp, change, saveFolder, save_file_name, logLevel)
                 result += data
             elif logLevel > 0:
                 print(f'Last statistics {interval} minutes ago. No statistics generated. (maxInterval={maxInterval})')
@@ -264,11 +264,23 @@ def getStatisticsAPI(url):
 
     return result
 
+def getStatisticList(summaryStatList, pd):
+    with open(summaryStatList, newline='') as f:
+        reader = csv.reader(f)
+        summary_list = list(reader)
+    auto = [word for word in summary_list if word[0] == "AUTO"]
+    result =  [word for word in summary_list if not word[0] == "AUTO"]
+
+    for a in auto:
+        result += getUniqueValues(pd, a[1], a[2])
+
+    return result
+    
 def getUniqueValues(pd, index, matching):
 
     u = pd[index].unique()
     result = []
     for e in u:
         if matching is None or matching in e:
-            result += [(e, e)]
+            result += [[e, e]]
     return result
