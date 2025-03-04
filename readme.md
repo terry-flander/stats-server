@@ -35,7 +35,7 @@ pyinstaller --onefile catania_stats.py
 
 For server.py:
 ```
-pyinstaller --onefile server.py -F --add-data "./templates/*:templates" --add-data "./scripts/*:scripts"
+pyinstaller --onefile server.py -F --add-data "./templates/*:templates" --add-data "./conf/*:./conf" --add-data "./data/test-data/*:./data/test-data"
 ```
 
 Note the inclusion of --add-data to include templates and scripts directory. This provides access to the Update Statistics List HTML page (updateStatList.html) and secure request scripts (catania_stat.*)
