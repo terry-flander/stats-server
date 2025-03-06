@@ -25,6 +25,6 @@ if __name__ == "__main__":
     parser.add_argument("--saveFolder", required=False, default='./data/summary-data')
     parser.add_argument("--summaryStatList", required=False, default=f"./conf/summary-stat-list.csv")
     parser.add_argument("--logLevel", required=False, default=0, type=int)
-    args = parser.parse_args()
+    args, unknown = parser.parse__known_args()
 
     main(args)

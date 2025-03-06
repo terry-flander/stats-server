@@ -3,7 +3,6 @@ data/summary-data/change/
 data/summary-data/raw
 conf/summary-stat-list-*.csv
 .DS*
-*.exe
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
