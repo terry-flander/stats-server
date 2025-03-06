@@ -16,7 +16,7 @@ parser.add_argument("--saveFolder", required=False, default='./data/summary-data
 parser.add_argument("--summaryStatList", required=False, default=f"./conf/summary-stat-list.csv")
 parser.add_argument("--maxInterval", required=False, default=10)
 parser.add_argument("--logLevel", required=False, default=0, type=int)
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
 
 @app.route('/stats/editConfig/v1.0')
 def get_edit_form():

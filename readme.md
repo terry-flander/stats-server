@@ -38,13 +38,20 @@ For server.py:
 pyinstaller --onefile server.py -F --add-data "./templates/*:templates" --add-data "./conf/*:./conf" --add-data "./data/test-data/*:./data/test-data"
 ```
 
+For server_one.py:
+```
+pyinstaller --onefile server_one.py -F --add-data "./templates/*:templates" --add-data "./conf/*:./conf" --add-data "./data/test-data/*:./data/test-data"
+```
+
 Note the inclusion of --add-data to include templates and scripts directory. This provides access to the Update Statistics List HTML page (updateStatList.html) and secure request scripts (catania_stat.*)
 
 After running these commands, you will find the compiled executables in the dist directory.
 
 ## USAGE
 
-Using the **server**.py Executable
+Using the **server** or **server_one** Executable
+
+There are two versions of this program due to difference in behaviour of the pyinstall between Windows and RHEL. For Linux the relative imports do not work as expected. To remove the issue, there is only the single PY program including all the library routines. Behaviour is the same for either.
 
 The server.py script provides a local webservice using Python Flask. By default it runs on *http://127.0.0.1:5000* and provides access to the *statistics_lib* which an use either a URL or a directory of local files as input to generate summary statistics.
 
