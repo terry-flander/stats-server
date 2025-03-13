@@ -1,6 +1,7 @@
 # Application generated
 data/summary-data/change/
 data/summary-data/raw
+data/stats/*
 conf/summary-stat-list-*.csv
 .DS*
 
