@@ -53,7 +53,7 @@ def calculateChange(time_1, time_2, lastTimestamp, saveFolder, save_file, logLev
             print(f"Change saved to {save_change}")
 
             os.makedirs(os.path.join(os.getcwd(), saveFolder + '/raw/'), exist_ok=True)
-            save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file.replace('.json','.csv')}'
+            save_raw = f'{os.getcwd()}/{saveFolder}/raw/{save_file.replace(".json",".csv")}'
             change_raw.to_csv(save_raw, index=False)
 
     except Exception:
@@ -272,15 +272,20 @@ def getStatisticList(summaryStatList, pd):
     result =  [word for word in summary_list if not word[0] == "AUTO"]
 
     for a in auto:
-        result += getUniqueValues(pd, a[1], a[2])
-
+        result += getUniqueValues(pd, a[1], a[2], a[3])
     return result
     
-def getUniqueValues(pd, index, matching):
+def getUniqueValues(pd, index, matching, prefix):
 
     u = pd[index].unique()
     result = []
     for e in u:
         if matching is None or matching in e:
-            result += [[e, e]]
+            if prefix is None or prefix == "":
+                result += [[e, e]]
+            else:
+                pre = prefix.split(";")
+                for p in pre:
+                    result += [[p + ":" + e, p + ".*?" + e]]
+
     return result
