@@ -7,6 +7,7 @@ import requests
 import pandas as pd
 import traceback
 import subprocess
+import pyodbc
 
 def prepareDataFrame(df, logLevel):
    
@@ -258,7 +259,7 @@ def getStatisticsAPI(url):
             with open('temp.json') as train_file:
                 result = json.load(train_file)
         else:
-            result = requests.get(url).json()
+            result = requests.get(url, verify=False).json()
     except Exception:
         print(traceback.format_exc())
 
@@ -289,3 +290,20 @@ def getUniqueValues(pd, index, matching, prefix):
                     result += [[p + ":" + e, p + ".*?" + e]]
 
     return result
+
+def getTableData():
+
+    result = query_db("SELECT * FROM [dbo].[statistics]", one=True)
+
+    return result
+
+def db():
+    return pyodbc.connect("DSN=Catania;Uid=TerryFlander;Pwd=ding32cat;")
+
+def query_db(query, one=False):
+    cur = db().cursor()
+    cur.execute(query)
+    r = [dict((cur.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cur.fetchall()]
+    cur.connection.close()
+    return (r[0] if r else None) if one else r

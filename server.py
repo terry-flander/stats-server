@@ -66,6 +66,11 @@ def update_stat_list():
         sl.saveStatList(summaryStatListUrl, summaryStatList, logLevel)
     return (sl.getStatList(summaryStatListUrl, logLevel))
 
+@app.route('/stats/api/v1.0/getData', methods=['GET'])
+def get_data():
+    result = sl.getTableData()
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)
  
