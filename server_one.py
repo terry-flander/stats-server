@@ -323,7 +323,7 @@ def getStatisticsAPI(url):
             with open('temp.json') as train_file:
                 result = json.load(train_file)
         else:
-            result = requests.get(url).json()
+            result = requests.get(url, verify=False).json()
     except Exception:
         print(traceback.format_exc())
 
